@@ -1,5 +1,6 @@
 use nalgebra::DMatrix;
-use rand::Rng;
+use rand::{Rng, SeedableRng};
+use rand::rngs::StdRng;
 
 use super::HopfieldNetwork;
 
@@ -16,6 +17,7 @@ pub struct HopfieldNetworkBuilder {
     maximum_relaxation_iterations: i32,
 }
 
+#[allow(dead_code)]
 impl HopfieldNetworkBuilder {
     /// Get a new HopfieldNetworkBuilder filled with the default values.
     ///
@@ -147,23 +149,23 @@ impl HopfieldNetworkBuilder {
 
     /// Build and return a new HopfieldNetwork using the parameters specified with builder methods.
     /// Note this consumes the builder.
-    pub fn build(self: HopfieldNetworkBuilder) -> HopfieldNetwork{
+    pub fn build(self: HopfieldNetworkBuilder) -> HopfieldNetwork {
         // First we validate any fields that need validating, panic if this goes awry
         if self.dimension <= 0 {
             panic!("HopfieldNetworkBuilder encountered an error during build! Dimension must be explicitly set to a positive integer!");
         };
 
-        if (self.domain == NetworkDomain::UnspecifiedDomain) {
+        if self.domain == NetworkDomain::UnspecifiedDomain {
             panic!("HopfieldNetworkBuilder encountered an error during build! Domain must be explicitly set to a valid network domain!");
         };
 
-        let mut rng = rand::thread_rng();
+        let mut rng = StdRng::from_entropy();
         let matrix = if self.rand_matrix_init {
             DMatrix::<f64>::from_iterator(
                 self.dimension,
                 self.dimension,
                 (0..self.dimension * self.dimension)
-                    .map(|_| rng.sample(rand_distr::StandardNormal)),
+                    .map(|_| rng.sample::<f64,rand_distr::StandardNormal>(rand_distr::StandardNormal) % 1.),
             )
         } else {
             DMatrix::<f64>::zeros(self.dimension, self.dimension)
@@ -180,7 +182,7 @@ impl HopfieldNetworkBuilder {
             domain: self.domain,
             activation_fn: activation_fn,
             maximum_relaxation_iterations: self.maximum_relaxation_iterations,
-            maximum_relaxation_unstable_units:self.maximum_relaxation_unstable_units
+            maximum_relaxation_unstable_units: self.maximum_relaxation_unstable_units,
         }
     }
 }
