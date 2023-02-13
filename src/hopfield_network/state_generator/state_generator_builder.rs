@@ -18,6 +18,7 @@ pub struct StateGeneratorBuilder {
     domain: NetworkDomain,
 }
 
+#[allow(dead_code)]
 impl StateGeneratorBuilder {
     pub fn new_state_generator_builder() -> StateGeneratorBuilder {
         return StateGeneratorBuilder {
@@ -86,7 +87,7 @@ impl StateGeneratorBuilder {
     }
 
     /// Checks if the builder will create a valid generator. Ensures that all parameters are in a valid range.
-    fn check_valid(self: StateGeneratorBuilder) {
+    fn check_valid(self: &StateGeneratorBuilder) {
         if self.random_lower_bound >= self.random_upper_bound {
             panic!("StateGeneratorBuilder encountered an error during build! random_lower_bound must be strictly smaller than random_lower_bound!")
         };
@@ -108,6 +109,7 @@ impl StateGeneratorBuilder {
     /// Note: the random generator given to the StateGenerator is based on ThreadRNG, so build() should be called
     /// within a thread.
     pub fn build(self: &StateGeneratorBuilder) -> StateGenerator {
+        self.check_valid();
         let mut rng = thread_rng();
 
         let gen_seed = if self.generator_seed != 0 {
