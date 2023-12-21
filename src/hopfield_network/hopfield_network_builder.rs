@@ -1,10 +1,8 @@
 use nalgebra::DMatrix;
-use rand::{Rng, SeedableRng};
-use rand::rngs::StdRng;
+use rand::{rngs::StdRng, Rng, SeedableRng};
 
 use super::HopfieldNetwork;
 
-use super::activation_function::map_domain_to_activation_function;
 use super::network_domain::NetworkDomain;
 
 pub struct HopfieldNetworkBuilder {
@@ -23,13 +21,13 @@ impl HopfieldNetworkBuilder {
     ///
     /// Note that some default values will cause build errors - this is intentional!
     /// Users should explicitly set at least these values before building.
-    pub fn new_hopfield_network_builder() -> HopfieldNetworkBuilder {
-        HopfieldNetworkBuilder {
+    pub fn new_hopfield_network_builder() -> Self {
+        Self {
             rand_matrix_init: false,
             dimension: 0,
             force_symmetric: true,
             force_zero_diagonal: true,
-            domain: NetworkDomain::UnspecifiedDomain,
+            domain: NetworkDomain::Unspecified,
             maximum_relaxation_unstable_units: 0,
             maximum_relaxation_iterations: 100,
         }
@@ -41,10 +39,7 @@ impl HopfieldNetworkBuilder {
     /// # Arguments
     ///
     /// * `rand_matrix_init` - A boolean flag to initialize the network matrix to gaussian values (if true).
-    pub fn set_rand_matrix_init(
-        mut self: HopfieldNetworkBuilder,
-        rand_matrix_init: bool,
-    ) -> HopfieldNetworkBuilder {
+    pub fn set_rand_matrix_init(mut self: Self, rand_matrix_init: bool) -> Self {
         self.rand_matrix_init = rand_matrix_init;
         self
     }
@@ -54,10 +49,7 @@ impl HopfieldNetworkBuilder {
     /// # Arguments
     ///
     /// * `dimension` - an integer specifying the size of the network to be built.
-    pub fn set_network_dimension(
-        mut self: HopfieldNetworkBuilder,
-        dimension: usize,
-    ) -> HopfieldNetworkBuilder {
+    pub fn set_network_dimension(mut self: Self, dimension: usize) -> Self {
         self.dimension = dimension;
         self
     }
@@ -72,10 +64,7 @@ impl HopfieldNetworkBuilder {
     ///
     /// * `force_symmetric_flag` - a boolean flag to set the networks weight matrix behavior
     ///     with respect to having a symmetric matrix.
-    pub fn set_force_symmetrix(
-        mut self: HopfieldNetworkBuilder,
-        force_symmetric_flag: bool,
-    ) -> HopfieldNetworkBuilder {
+    pub fn set_force_symmetrix(mut self: Self, force_symmetric_flag: bool) -> Self {
         self.force_symmetric = force_symmetric_flag;
         self
     }
@@ -88,18 +77,15 @@ impl HopfieldNetworkBuilder {
     ///
     /// * `force_zero_diagonal_flag` - a boolean flag to set the networks weight matrix behavior
     ///     with respect to having a zero values on the diagonal.
-    pub fn set_zero_diagonal_flag(
-        mut self: HopfieldNetworkBuilder,
-        force_zero_diagonal_flag: bool,
-    ) -> HopfieldNetworkBuilder {
+    pub fn set_zero_diagonal_flag(mut self: Self, force_zero_diagonal_flag: bool) -> Self {
         self.force_zero_diagonal = force_zero_diagonal_flag;
         self
     }
 
     /// Set the domain of the HopfieldNetwork - i.e. what numbers are allowed to exist in states.
     ///
-    /// Valid options are taken from the NetworkDomain enum (BinaryDomain, BipolarDomain, ContinuousDomain).
-    /// Note that UnspecifiedDomain is the default and throws and error if building is attempted.
+    /// Valid options are taken from the NetworkDomain enum (Binary, Bipolar, Continuous).
+    /// Note that Unspecified is the default and throws and error if building is attempted.
     ///
     /// Must be specified before Build can be called.
     ///
@@ -107,10 +93,7 @@ impl HopfieldNetworkBuilder {
     ///
     /// * `domain` - a value from the NetworkDomain enum to set the networks domain.
     ///     This will in turn set the networks activation function and energy function.
-    pub fn set_network_domain(
-        mut self: HopfieldNetworkBuilder,
-        domain: NetworkDomain,
-    ) -> HopfieldNetworkBuilder {
+    pub fn set_network_domain(mut self: Self, domain: NetworkDomain) -> Self {
         self.domain = domain;
         self
     }
@@ -124,9 +107,9 @@ impl HopfieldNetworkBuilder {
     /// * `maximum_relaxation_unstable_units` - an integer to set the number of states that are allowed to
     ///     be unstable (E>0) for a state to be considered stable overall.
     pub fn set_maximum_relaxation_unstable_units(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         maximum_relaxation_unstable_units: i32,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.maximum_relaxation_unstable_units = maximum_relaxation_unstable_units;
         self
     }
@@ -140,47 +123,44 @@ impl HopfieldNetworkBuilder {
     /// * `maximum_relaxation_iterations` - an integer to determine the number of iterations to undertake
     ///     before a state is considered unstable during relaxation.
     pub fn set_maximum_relaxation_iterations(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         maximum_relaxation_iterations: i32,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.maximum_relaxation_iterations = maximum_relaxation_iterations;
         self
     }
 
     /// Build and return a new HopfieldNetwork using the parameters specified with builder methods.
     /// Note this consumes the builder.
-    pub fn build(self: HopfieldNetworkBuilder) -> HopfieldNetwork {
+    pub fn build(self: Self) -> HopfieldNetwork {
         // First we validate any fields that need validating, panic if this goes awry
-        if self.dimension <= 0 {
-            panic!("HopfieldNetworkBuilder encountered an error during build! Dimension must be explicitly set to a positive integer!");
-        };
+        assert!(self.dimension > 0,
+            "HopfieldNetworkBuilder encountered an error during build! Dimension must be explicitly set to a positive integer!");
 
-        if self.domain == NetworkDomain::UnspecifiedDomain {
-            panic!("HopfieldNetworkBuilder encountered an error during build! Domain must be explicitly set to a valid network domain!");
-        };
+        assert!(self.domain != NetworkDomain::Unspecified,
+            "HopfieldNetworkBuilder encountered an error during build! Domain must be explicitly set to a valid network domain!");
 
         let mut rng = StdRng::from_entropy();
         let matrix = if self.rand_matrix_init {
             DMatrix::<f64>::from_iterator(
                 self.dimension,
                 self.dimension,
-                (0..self.dimension * self.dimension)
-                    .map(|_| rng.sample::<f64,rand_distr::StandardNormal>(rand_distr::StandardNormal) % 1.),
+                (0..self.dimension * self.dimension).map(|_| {
+                    rng.sample::<f64, rand_distr::StandardNormal>(rand_distr::StandardNormal) % 1.
+                }),
             )
         } else {
             DMatrix::<f64>::zeros(self.dimension, self.dimension)
         };
 
-        let activation_fn = map_domain_to_activation_function(&self.domain);
-
         HopfieldNetwork {
-            matrix: matrix,
-            rng: rng,
+            matrix,
+            rng,
             dimension: self.dimension,
             force_symmetric: self.force_symmetric,
             force_zero_diagonal: self.force_zero_diagonal,
             domain: self.domain,
-            activation_fn: activation_fn,
+            activation_fn: self.domain.activation_fn(),
             maximum_relaxation_iterations: self.maximum_relaxation_iterations,
             maximum_relaxation_unstable_units: self.maximum_relaxation_unstable_units,
         }

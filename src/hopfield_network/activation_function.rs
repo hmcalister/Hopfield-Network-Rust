@@ -1,8 +1,4 @@
-use std::collections::HashMap;
-
 use nalgebra::DVector;
-
-use super::NetworkDomain;
 
 /// Define an activation function to takes ownership of a vector.
 /// An activation function will map the vector in place to the correct domain values.
@@ -20,17 +16,4 @@ pub fn bipolar_activation_function(vector: DVector<f64>) -> DVector<f64> {
 
 pub fn identity_activation_function(vector: DVector<f64>) -> DVector<f64> {
     vector
-}
-
-pub fn map_domain_to_activation_function(domain: &NetworkDomain) -> ActivationFunction {
-    let mut map: HashMap<NetworkDomain, ActivationFunction> = HashMap::new();
-    map.insert(NetworkDomain::BinaryDomain, binary_activation_function);
-    map.insert(NetworkDomain::BipolarDomain, bipolar_activation_function);
-    map.insert(
-        NetworkDomain::ContinuousDomain,
-        identity_activation_function,
-    );
-
-    *map.get(domain)
-        .expect("Error mapping domain to activation function. Domain does not have an associated activation function.")
 }
