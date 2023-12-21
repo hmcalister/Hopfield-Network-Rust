@@ -58,7 +58,7 @@ impl HopfieldNetwork {
     /// If force_zero_diagonal is set, the main diagonal of the matrix is set to 0.0
     ///
     /// If force_symmetric is set, the lower triangle of this matrix is filled with the upper triangle.
-    pub fn clean_matrix(self: &mut HopfieldNetwork) {
+    pub fn clean_matrix(self: &mut Self) {
         if self.force_zero_diagonal {
             self.matrix.fill_diagonal(0.);
         }
@@ -76,7 +76,7 @@ impl HopfieldNetwork {
     ///
     /// A vector of `usize` containing the (initially ordered) set of all integers from 0
     /// to the network dimension.
-    fn get_unit_indices(self: &HopfieldNetwork) -> Vec<usize> {
+    fn get_unit_indices(self: &Self) -> Vec<usize> {
         (0..self.dimension).collect()
     }
 
@@ -89,7 +89,7 @@ impl HopfieldNetwork {
     /// # Returns
     ///
     /// An `f64` representing the overall energy of the given state in this network.
-    pub fn state_energy(self: &HopfieldNetwork, state: &DVector<f64>) -> f64 {
+    pub fn state_energy(self: &Self, state: &DVector<f64>) -> f64 {
         energy_function::state_energy_function(&self.matrix, state)
     }
 
@@ -103,7 +103,7 @@ impl HopfieldNetwork {
     /// # Returns
     ///
     /// An `f64` representing the energy of the single unit in question.
-    pub fn unit_energy(self: &HopfieldNetwork, state: &DVector<f64>, unit_index: usize) -> f64 {
+    pub fn unit_energy(self: &Self, state: &DVector<f64>, unit_index: usize) -> f64 {
         energy_function::unit_energy_function(&self.matrix, state, unit_index)
     }
 
@@ -116,7 +116,7 @@ impl HopfieldNetwork {
     /// # Returns
     ///
     /// A DVector of `f64` representing the energies of each unit in the state.
-    pub fn all_unit_energies(self: &HopfieldNetwork, state: &DVector<f64>) -> DVector<f64> {
+    pub fn all_unit_energies(self: &Self, state: &DVector<f64>) -> DVector<f64> {
         energy_function::all_unit_energies(&self.matrix, state)
     }
 
@@ -132,7 +132,7 @@ impl HopfieldNetwork {
     ///
     /// The newly updated state after all units have been updated once. The memory of the returned state
     /// is the same as the passed state.
-    pub fn update_state(self: &mut HopfieldNetwork, mut state: DVector<f64>) -> DVector<f64> {
+    pub fn update_state(self: &mut Self, mut state: DVector<f64>) -> DVector<f64> {
         let mut unit_indices = self.get_unit_indices();
         unit_indices.shuffle(&mut self.rng);
 
@@ -151,7 +151,7 @@ impl HopfieldNetwork {
     /// # Arguments
     ///
     /// * `state` - The state the relax. Consumes the state.
-    pub fn relax_state(self: &mut HopfieldNetwork, mut state: DVector<f64>) -> DVector<f64> {
+    pub fn relax_state(self: &mut Self, mut state: DVector<f64>) -> DVector<f64> {
         // We perform up to a maximum number of iterations
         for _ in 0..self.maximum_relaxation_iterations {
             // Each time, we update the state
@@ -189,7 +189,7 @@ impl HopfieldNetwork {
     ///
     /// A new collection of states that have now been relaxed. Note the ordering from the original collection is maintained.
     pub fn concurrent_relax_state_collection(
-        self: &mut HopfieldNetwork,
+        self: &mut Self,
         state_collection: Vec<DVector<f64>>,
         threads: usize,
     ) -> Vec<DVector<f64>> {
