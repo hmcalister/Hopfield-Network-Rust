@@ -20,23 +20,20 @@ pub struct StateGeneratorBuilder {
 
 #[allow(dead_code)]
 impl StateGeneratorBuilder {
-    pub fn new_state_generator_builder() -> StateGeneratorBuilder {
-        return StateGeneratorBuilder {
+    pub fn new_state_generator_builder() -> Self {
+        Self {
             random_lower_bound: -1.0,
             random_upper_bound: 1.0,
             generator_seed: 0,
             dimension: 0,
             domain: NetworkDomain::Unspecified,
-        };
+        }
     }
 
     /// Set the lower bound of the uniform distribution to use for state generation
     ///
     /// Be aware that random_lower_bound must be strictly less than random_upper_bound to build.
-    pub fn set_random_lower_bound(
-        mut self: StateGeneratorBuilder,
-        random_lower_bound: f64,
-    ) -> StateGeneratorBuilder {
+    pub fn set_random_lower_bound(mut self: Self, random_lower_bound: f64) -> Self {
         self.random_lower_bound = random_lower_bound;
         self
     }
@@ -44,10 +41,7 @@ impl StateGeneratorBuilder {
     /// Set the upper bound of the uniform distribution to use for state generation
     ///
     /// Be aware that random_lower_bound must be strictly less than random_upper_bound to build.
-    pub fn set_random_upper_bound(
-        mut self: StateGeneratorBuilder,
-        random_upper_bound: f64,
-    ) -> StateGeneratorBuilder {
+    pub fn set_random_upper_bound(mut self: Self, random_upper_bound: f64) -> Self {
         self.random_upper_bound = random_upper_bound;
         self
     }
@@ -55,10 +49,7 @@ impl StateGeneratorBuilder {
     /// Set the random seed for the uniform distribution used for state generation.
     ///
     /// If the seed is left at the default value (0) then a random seed is created.
-    pub fn set_generator_seed(
-        mut self: StateGeneratorBuilder,
-        generator_seed: u64,
-    ) -> StateGeneratorBuilder {
+    pub fn set_generator_seed(mut self: Self, generator_seed: u64) -> Self {
         self.generator_seed = generator_seed;
         self
     }
@@ -66,10 +57,7 @@ impl StateGeneratorBuilder {
     /// Set the dimension of the vectors to be produced, i.e. the length of the vector.
     ///
     /// Dimension must be a strictly positive integer and match the Hopfield Network dimension.
-    pub fn set_dimension(
-        mut self: StateGeneratorBuilder,
-        dimension: usize,
-    ) -> StateGeneratorBuilder {
+    pub fn set_dimension(mut self: Self, dimension: usize) -> Self {
         self.dimension = dimension;
         self
     }
@@ -78,27 +66,21 @@ impl StateGeneratorBuilder {
     /// to be used to ensure states end up as valid.
     ///
     /// Domain must be a valid NetworkDomain.
-    pub fn set_domain(
-        mut self: StateGeneratorBuilder,
-        domain: NetworkDomain,
-    ) -> StateGeneratorBuilder {
+    pub fn set_domain(mut self: Self, domain: NetworkDomain) -> Self {
         self.domain = domain;
         self
     }
 
     /// Checks if the builder will create a valid generator. Ensures that all parameters are in a valid range.
-    fn check_valid(self: &StateGeneratorBuilder) {
-        if self.random_lower_bound >= self.random_upper_bound {
-            panic!("StateGeneratorBuilder encountered an error during build! random_lower_bound must be strictly smaller than random_lower_bound!")
-        };
+    fn check_valid(self: &Self) {
+        assert!(self.random_lower_bound < self.random_upper_bound,
+            "StateGeneratorBuilder encountered an error during build! random_lower_bound must be strictly smaller than random_lower_bound!");
 
-        if self.dimension <= 0 {
-            panic!("StateGeneratorBuilder encountered an error during build! Dimension must be strictly positive!")
-        };
+        assert!(self.dimension > 0,
+            "StateGeneratorBuilder encountered an error during build! Dimension must be strictly positive!");
 
-        if self.domain == NetworkDomain::Unspecified {
-            panic!("StateGeneratorBuilder encountered an error during build! Domain must be a valid network domain!")
-        }
+        assert!(self.domain != NetworkDomain::Unspecified,
+            "StateGeneratorBuilder encountered an error during build! Domain must be a valid network domain!");
     }
 
     /// Build a state generator from the parameters given. Note that this function is NON CONSUMING!
@@ -108,7 +90,7 @@ impl StateGeneratorBuilder {
     ///
     /// Note: the random generator given to the StateGenerator is based on ThreadRNG, so build() should be called
     /// within a thread.
-    pub fn build(self: &StateGeneratorBuilder) -> StateGenerator {
+    pub fn build(self: &Self) -> StateGenerator {
         self.check_valid();
         let mut rng = thread_rng();
 
