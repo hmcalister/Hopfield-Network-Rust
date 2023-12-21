@@ -26,7 +26,7 @@ impl StateGeneratorBuilder {
             random_upper_bound: 1.0,
             generator_seed: 0,
             dimension: 0,
-            domain: NetworkDomain::UnspecifiedDomain,
+            domain: NetworkDomain::Unspecified,
         };
     }
 
@@ -96,7 +96,7 @@ impl StateGeneratorBuilder {
             panic!("StateGeneratorBuilder encountered an error during build! Dimension must be strictly positive!")
         };
 
-        if self.domain == NetworkDomain::UnspecifiedDomain {
+        if self.domain == NetworkDomain::Unspecified {
             panic!("StateGeneratorBuilder encountered an error during build! Domain must be a valid network domain!")
         }
     }

@@ -16,7 +16,6 @@ use rand::{rngs::StdRng, seq::SliceRandom, RngCore, SeedableRng};
 use std::{
     fmt,
     sync::mpsc::{self, Sender},
-    thread,
 };
 
 #[derive(Debug)]

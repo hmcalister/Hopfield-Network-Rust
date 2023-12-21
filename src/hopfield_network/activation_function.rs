@@ -24,10 +24,10 @@ pub fn identity_activation_function(vector: DVector<f64>) -> DVector<f64> {
 
 pub fn map_domain_to_activation_function(domain: &NetworkDomain) -> ActivationFunction {
     let mut map: HashMap<NetworkDomain, ActivationFunction> = HashMap::new();
-    map.insert(NetworkDomain::BinaryDomain, binary_activation_function);
-    map.insert(NetworkDomain::BipolarDomain, bipolar_activation_function);
+    map.insert(NetworkDomain::Binary, binary_activation_function);
+    map.insert(NetworkDomain::Bipolar, bipolar_activation_function);
     map.insert(
-        NetworkDomain::ContinuousDomain,
+        NetworkDomain::Continuous,
         identity_activation_function,
     );
 

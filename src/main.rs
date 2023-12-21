@@ -5,7 +5,7 @@ use std::time::Instant;
 use crate::hopfield_network::*;
 
 const DIMENSION: usize = 100;
-const DOMAIN: NetworkDomain = NetworkDomain::BinaryDomain;
+const DOMAIN: NetworkDomain = NetworkDomain::Binary;
 
 fn main() {
     let mut network = HopfieldNetworkBuilder::new_hopfield_network_builder()

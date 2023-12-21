@@ -29,7 +29,7 @@ impl HopfieldNetworkBuilder {
             dimension: 0,
             force_symmetric: true,
             force_zero_diagonal: true,
-            domain: NetworkDomain::UnspecifiedDomain,
+            domain: NetworkDomain::Unspecified,
             maximum_relaxation_unstable_units: 0,
             maximum_relaxation_iterations: 100,
         }
@@ -98,8 +98,8 @@ impl HopfieldNetworkBuilder {
 
     /// Set the domain of the HopfieldNetwork - i.e. what numbers are allowed to exist in states.
     ///
-    /// Valid options are taken from the NetworkDomain enum (BinaryDomain, BipolarDomain, ContinuousDomain).
-    /// Note that UnspecifiedDomain is the default and throws and error if building is attempted.
+    /// Valid options are taken from the NetworkDomain enum (Binary, Bipolar, Continuous).
+    /// Note that Unspecified is the default and throws and error if building is attempted.
     ///
     /// Must be specified before Build can be called.
     ///
@@ -155,7 +155,7 @@ impl HopfieldNetworkBuilder {
             panic!("HopfieldNetworkBuilder encountered an error during build! Dimension must be explicitly set to a positive integer!");
         };
 
-        if self.domain == NetworkDomain::UnspecifiedDomain {
+        if self.domain == NetworkDomain::Unspecified {
             panic!("HopfieldNetworkBuilder encountered an error during build! Domain must be explicitly set to a valid network domain!");
         };
 
@@ -174,13 +174,13 @@ impl HopfieldNetworkBuilder {
         let activation_fn = map_domain_to_activation_function(&self.domain);
 
         HopfieldNetwork {
-            matrix: matrix,
-            rng: rng,
+            matrix,
+            rng,
             dimension: self.dimension,
             force_symmetric: self.force_symmetric,
             force_zero_diagonal: self.force_zero_diagonal,
             domain: self.domain,
-            activation_fn: activation_fn,
+            activation_fn,
             maximum_relaxation_iterations: self.maximum_relaxation_iterations,
             maximum_relaxation_unstable_units: self.maximum_relaxation_unstable_units,
         }
