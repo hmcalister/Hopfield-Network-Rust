@@ -177,7 +177,7 @@ impl HopfieldNetwork {
 
         state
     }
-    
+
     /// Relax a collection of states concurrently. The returned states will be in the same order as the original collections.
     ///
     /// # Arguments
@@ -195,17 +195,17 @@ impl HopfieldNetwork {
     ) -> Vec<DVector<f64>> {
         let total_states = state_collection.len();
         let mut state_result_collection = Vec::with_capacity(state_collection.len());
-    
+
         let mut thread_states = Vec::with_capacity(threads);
         for _ in 0..threads {
             thread_states.push(Vec::new());
         }
         for (index, state) in state_collection.into_iter().enumerate() {
-            thread_states[index%threads].push((index, state));
+            thread_states[index % threads].push((index, state));
         }
-    
+
         let (result_channel_tx, result_channel_rx) = mpsc::channel();
-    
+
         crossbeam::scope(|scope| {
             for thread_index in 0..threads {
                 let matrix = self.matrix.clone();
@@ -229,13 +229,14 @@ impl HopfieldNetwork {
                     )
                 });
             }
-        }).unwrap();
-    
+        })
+        .unwrap();
+
         // While we are still expecting more results, keep receiving!
         while state_result_collection.len() < total_states {
             state_result_collection.push(result_channel_rx.recv().unwrap())
         }
-    
+
         state_result_collection.sort_unstable_by_key(|k| (*k).0);
         state_result_collection.into_iter().map(|i| i.1).collect()
     }

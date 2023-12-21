@@ -26,10 +26,7 @@ pub fn map_domain_to_activation_function(domain: &NetworkDomain) -> ActivationFu
     let mut map: HashMap<NetworkDomain, ActivationFunction> = HashMap::new();
     map.insert(NetworkDomain::Binary, binary_activation_function);
     map.insert(NetworkDomain::Bipolar, bipolar_activation_function);
-    map.insert(
-        NetworkDomain::Continuous,
-        identity_activation_function,
-    );
+    map.insert(NetworkDomain::Continuous, identity_activation_function);
 
     *map.get(domain)
         .expect("Error mapping domain to activation function. Domain does not have an associated activation function.")
