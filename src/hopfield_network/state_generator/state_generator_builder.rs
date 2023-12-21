@@ -94,20 +94,20 @@ impl StateGeneratorBuilder {
         self.check_valid();
         let mut rng = thread_rng();
 
-        let gen_seed = if self.generator_seed != 0 {
+        let rng_seed = if self.generator_seed != 0 {
             self.generator_seed
         } else {
             rng.gen()
         };
-        let gen_rng = StdRng::seed_from_u64(gen_seed);
-        let gen_rand_dist = Uniform::from(self.random_lower_bound..self.random_upper_bound);
+        let rng = StdRng::seed_from_u64(rng_seed);
+        let rng_distribution = Uniform::from(self.random_lower_bound..self.random_upper_bound);
 
         let activation_function = map_domain_to_activation_function(&self.domain);
         StateGenerator {
-            rng: gen_rng,
-            rng_distribution: gen_rand_dist,
-            rng_seed: gen_seed,
-            activation_function: activation_function,
+            rng,
+            rng_distribution,
+            rng_seed,
+            activation_function,
             dimension: self.dimension,
             domain: self.domain.clone(),
         }
