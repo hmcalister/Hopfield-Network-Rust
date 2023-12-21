@@ -23,8 +23,8 @@ impl HopfieldNetworkBuilder {
     ///
     /// Note that some default values will cause build errors - this is intentional!
     /// Users should explicitly set at least these values before building.
-    pub fn new_hopfield_network_builder() -> HopfieldNetworkBuilder {
-        HopfieldNetworkBuilder {
+    pub fn new_hopfield_network_builder() -> Self {
+        Self {
             rand_matrix_init: false,
             dimension: 0,
             force_symmetric: true,
@@ -42,9 +42,9 @@ impl HopfieldNetworkBuilder {
     ///
     /// * `rand_matrix_init` - A boolean flag to initialize the network matrix to gaussian values (if true).
     pub fn set_rand_matrix_init(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         rand_matrix_init: bool,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.rand_matrix_init = rand_matrix_init;
         self
     }
@@ -55,9 +55,9 @@ impl HopfieldNetworkBuilder {
     ///
     /// * `dimension` - an integer specifying the size of the network to be built.
     pub fn set_network_dimension(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         dimension: usize,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.dimension = dimension;
         self
     }
@@ -73,9 +73,9 @@ impl HopfieldNetworkBuilder {
     /// * `force_symmetric_flag` - a boolean flag to set the networks weight matrix behavior
     ///     with respect to having a symmetric matrix.
     pub fn set_force_symmetrix(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         force_symmetric_flag: bool,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.force_symmetric = force_symmetric_flag;
         self
     }
@@ -89,9 +89,9 @@ impl HopfieldNetworkBuilder {
     /// * `force_zero_diagonal_flag` - a boolean flag to set the networks weight matrix behavior
     ///     with respect to having a zero values on the diagonal.
     pub fn set_zero_diagonal_flag(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         force_zero_diagonal_flag: bool,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.force_zero_diagonal = force_zero_diagonal_flag;
         self
     }
@@ -108,9 +108,9 @@ impl HopfieldNetworkBuilder {
     /// * `domain` - a value from the NetworkDomain enum to set the networks domain.
     ///     This will in turn set the networks activation function and energy function.
     pub fn set_network_domain(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         domain: NetworkDomain,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.domain = domain;
         self
     }
@@ -124,9 +124,9 @@ impl HopfieldNetworkBuilder {
     /// * `maximum_relaxation_unstable_units` - an integer to set the number of states that are allowed to
     ///     be unstable (E>0) for a state to be considered stable overall.
     pub fn set_maximum_relaxation_unstable_units(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         maximum_relaxation_unstable_units: i32,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.maximum_relaxation_unstable_units = maximum_relaxation_unstable_units;
         self
     }
@@ -140,16 +140,16 @@ impl HopfieldNetworkBuilder {
     /// * `maximum_relaxation_iterations` - an integer to determine the number of iterations to undertake
     ///     before a state is considered unstable during relaxation.
     pub fn set_maximum_relaxation_iterations(
-        mut self: HopfieldNetworkBuilder,
+        mut self: Self,
         maximum_relaxation_iterations: i32,
-    ) -> HopfieldNetworkBuilder {
+    ) -> Self {
         self.maximum_relaxation_iterations = maximum_relaxation_iterations;
         self
     }
 
     /// Build and return a new HopfieldNetwork using the parameters specified with builder methods.
     /// Note this consumes the builder.
-    pub fn build(self: HopfieldNetworkBuilder) -> HopfieldNetwork {
+    pub fn build(self: Self) -> HopfieldNetwork {
         // First we validate any fields that need validating, panic if this goes awry
         if self.dimension <= 0 {
             panic!("HopfieldNetworkBuilder encountered an error during build! Dimension must be explicitly set to a positive integer!");
