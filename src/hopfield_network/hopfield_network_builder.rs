@@ -136,13 +136,11 @@ impl HopfieldNetworkBuilder {
     /// Note this consumes the builder.
     pub fn build(self: Self) -> HopfieldNetwork {
         // First we validate any fields that need validating, panic if this goes awry
-        if self.dimension <= 0 {
-            panic!("HopfieldNetworkBuilder encountered an error during build! Dimension must be explicitly set to a positive integer!");
-        };
+        assert!(self.dimension > 0,
+            "HopfieldNetworkBuilder encountered an error during build! Dimension must be explicitly set to a positive integer!");
 
-        if self.domain == NetworkDomain::Unspecified {
-            panic!("HopfieldNetworkBuilder encountered an error during build! Domain must be explicitly set to a valid network domain!");
-        };
+        assert!(self.domain != NetworkDomain::Unspecified,
+            "HopfieldNetworkBuilder encountered an error during build! Domain must be explicitly set to a valid network domain!");
 
         let mut rng = StdRng::from_entropy();
         let matrix = if self.rand_matrix_init {
