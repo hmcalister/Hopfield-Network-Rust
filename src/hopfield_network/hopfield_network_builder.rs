@@ -4,7 +4,6 @@ use rand::{Rng, SeedableRng};
 
 use super::HopfieldNetwork;
 
-use super::activation_function::map_domain_to_activation_function;
 use super::network_domain::NetworkDomain;
 
 pub struct HopfieldNetworkBuilder {
@@ -155,8 +154,6 @@ impl HopfieldNetworkBuilder {
             DMatrix::<f64>::zeros(self.dimension, self.dimension)
         };
 
-        let activation_fn = map_domain_to_activation_function(&self.domain);
-
         HopfieldNetwork {
             matrix,
             rng,
@@ -164,7 +161,7 @@ impl HopfieldNetworkBuilder {
             force_symmetric: self.force_symmetric,
             force_zero_diagonal: self.force_zero_diagonal,
             domain: self.domain,
-            activation_fn,
+            activation_fn: self.domain.activation_fn(),
             maximum_relaxation_iterations: self.maximum_relaxation_iterations,
             maximum_relaxation_unstable_units: self.maximum_relaxation_unstable_units,
         }

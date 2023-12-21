@@ -1,4 +1,3 @@
-use super::super::activation_function::map_domain_to_activation_function;
 use super::NetworkDomain;
 use super::StateGenerator;
 use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
@@ -102,12 +101,11 @@ impl StateGeneratorBuilder {
         let rng = StdRng::seed_from_u64(rng_seed);
         let rng_distribution = Uniform::from(self.random_lower_bound..self.random_upper_bound);
 
-        let activation_function = map_domain_to_activation_function(&self.domain);
         StateGenerator {
             rng,
             rng_distribution,
             rng_seed,
-            activation_function,
+            activation_function: self.domain.activation_fn(),
             dimension: self.dimension,
             domain: self.domain.clone(),
         }
