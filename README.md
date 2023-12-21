@@ -1,5 +1,6 @@
 # Hopfield Network Rust
-#### Author: Hayden McAlister
+#### Author: [Hayden McAlister](https://github.com/hmcalister)
+#### Contributors: [adamnemecek](https://github.com/adamnemecek)
 
 ## Introduction
 
