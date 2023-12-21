@@ -10,12 +10,14 @@ mod network_domain;
 pub use hopfield_network_builder::HopfieldNetworkBuilder;
 pub use network_domain::NetworkDomain;
 
-use activation_function::ActivationFunction;
-use nalgebra::{DMatrix, DVector};
-use rand::{rngs::StdRng, seq::SliceRandom, RngCore, SeedableRng};
-use std::{
-    fmt,
-    sync::mpsc::{self, Sender},
+use {
+    activation_function::ActivationFunction,
+    nalgebra::{DMatrix, DVector},
+    rand::{rngs::StdRng, seq::SliceRandom, RngCore, SeedableRng},
+    std::{
+        fmt,
+        sync::mpsc::{self, Sender},
+    },
 };
 
 #[derive(Debug)]
@@ -158,17 +160,9 @@ impl HopfieldNetwork {
             state = self.update_state(state);
             // We then get all the state energies and fold over them
             // accumulating a count of the unstable states by checking if the energy is greater than 0
-            let unstable_units =
-                self.all_unit_energies(&state).fold::<i32>(
-                    0,
-                    |acc, i| {
-                        if i > 0. {
-                            acc + 1
-                        } else {
-                            acc
-                        }
-                    },
-                );
+            let unstable_units = self
+                .all_unit_energies(&state)
+                .fold::<i32>(0, |acc, i| acc + if i > 0. { 1 } else { 0 });
 
             if unstable_units < self.maximum_relaxation_unstable_units {
                 break;

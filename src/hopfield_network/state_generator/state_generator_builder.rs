@@ -1,5 +1,4 @@
-use super::NetworkDomain;
-use super::StateGenerator;
+use super::{NetworkDomain, StateGenerator};
 use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
 use rand_distr::Uniform;
 

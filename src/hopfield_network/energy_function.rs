@@ -16,7 +16,7 @@ pub fn state_energy_function(matrix: &DMatrix<f64>, vector: &DVector<f64>) -> f6
     // The first multiplication (matrix*vector) calculates M_ij * V_j.
     // By component_mul then tacks on an extra term of V_i.
     // Finally we sum all the rows to get the final answer.
-    -1.0 * (matrix * vector).component_mul(vector).row_sum()[(0, 0)]
+    -(matrix * vector).component_mul(vector).row_sum()[(0, 0)]
 }
 
 /// Get the energy of each unit in a state, returning this as a DVector of energies for each unit
@@ -47,5 +47,5 @@ pub fn all_unit_energies(matrix: &DMatrix<f64>, vector: &DVector<f64>) -> DVecto
 pub fn unit_energy_function(matrix: &DMatrix<f64>, vector: &DVector<f64>, index: usize) -> f64 {
     // This is much the same as the StateEnergyFunction but now only multiplies
     // the target rows together - hopefully saving cycles?
-    -1.0 * (matrix.row(index) * vector * vector.row(index)).row_sum()[(0, 0)]
+    -(matrix.row(index) * vector * vector.row(index)).row_sum()[(0, 0)]
 }

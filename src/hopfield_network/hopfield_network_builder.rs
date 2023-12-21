@@ -1,6 +1,5 @@
 use nalgebra::DMatrix;
-use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
+use rand::{rngs::StdRng, Rng, SeedableRng};
 
 use super::HopfieldNetwork;
 
