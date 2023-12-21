@@ -24,7 +24,7 @@ impl StateGenerator {
     /// # Returns
     ///
     /// The seed of this state generator as a `u64`.
-    pub fn get_rng_seed(self: &StateGenerator) -> u64 {
+    pub fn get_rng_seed(self: &Self) -> u64 {
         self.rng_seed
     }
 
@@ -33,7 +33,7 @@ impl StateGenerator {
     /// # Returns
     ///
     /// The domain of this state generator as a `NetworkDomain`
-    pub fn get_domain(self: &StateGenerator) -> NetworkDomain {
+    pub fn get_domain(self: &Self) -> NetworkDomain {
         self.domain
     }
 
@@ -42,7 +42,7 @@ impl StateGenerator {
     /// # Returns
     ///
     /// A single state from this generator as a `DVector<f64>` - already mapped by the activation function.
-    pub fn next_state(self: &mut StateGenerator) -> DVector<f64> {
+    pub fn next_state(self: &mut Self) -> DVector<f64> {
         let vector = DVector::<f64>::from_iterator(
             self.dimension,
             (0..self.dimension).map(|_| self.rng.sample(self.rng_distribution)),
@@ -56,10 +56,7 @@ impl StateGenerator {
     /// # Returns
     ///
     /// A collection of states from this generator wrapped as a Vec.
-    pub fn create_state_collection(
-        self: &mut StateGenerator,
-        num_states: usize,
-    ) -> Vec<DVector<f64>> {
+    pub fn create_state_collection(self: &mut Self, num_states: usize) -> Vec<DVector<f64>> {
         (0..num_states).map(|_| self.next_state()).collect()
     }
 }
